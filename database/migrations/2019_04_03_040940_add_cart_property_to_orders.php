@@ -46,7 +46,7 @@ class AddCartPropertyToOrders extends Migration
     // private function createView(): string
     // {
     //     return <<<SQL
-
+    // CREATE ALGORITHM = MERGE SQL SECURITY DEFINER VIEW `carts` AS SELECT * FROM orders WHERE orders.is_cart = TRUE ;
     //     SQL;
     // }
 }
