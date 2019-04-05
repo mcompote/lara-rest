@@ -3,10 +3,9 @@
 namespace App;
 
 use \App\RawOrderDetails;
-use \App\QueryScopes\OrderDetailsScope;
+use \App\QueryScopes\CartDetailsScope;
 
-
-class OrderDetails extends RawOrder
+class CartDetails extends RawOrderDetails
 {
 
     //adding global scope to model
@@ -14,6 +13,6 @@ class OrderDetails extends RawOrder
     {
         parent::boot();
 
-        static::addGlobalScope(new OrderDetailsScope);
-    }    
+        static::addGlobalScope(new CartDetailsScope);
+    }
 }

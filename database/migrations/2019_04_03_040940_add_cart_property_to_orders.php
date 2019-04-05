@@ -33,20 +33,4 @@ class AddCartPropertyToOrders extends Migration
             $table->removeColumn('is_cart');
         });
     }
-
-
-
-    // private function dropView(): string
-    // {
-    //     return <<<SQL
-    //         DROP VIEW IF EXISTS `carts`;
-    //     SQL;
-    // }
-
-    // private function createView(): string
-    // {
-    //     return <<<SQL
-    // CREATE ALGORITHM = MERGE SQL SECURITY DEFINER VIEW `carts` AS SELECT * FROM orders WHERE orders.is_cart = TRUE ;
-    //     SQL;
-    // }
 }

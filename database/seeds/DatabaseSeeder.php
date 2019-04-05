@@ -25,5 +25,6 @@ class DatabaseSeeder extends Seeder
         $this->call(OrdersTableSeeder::class);
         $this->call(OrderDetailsTableSeeder::class);
         $this->call(OrdersTableUpdateCartFieldSeeder::class);
+        // $this->call(Create2ViewsFromOrdersTable::class);
     }
 }
