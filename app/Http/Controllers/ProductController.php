@@ -24,7 +24,13 @@ class ProductController extends Controller
      */
     public function create()
     {
-        //
+        dd( request()->all() );
+        return view('test.createProduct');
+    }
+
+    public function test666()
+    {
+        return view('test.createProduct');
     }
 
     /**
@@ -35,7 +41,12 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validatedAttributes = request()->validate([
+            'name' => 'required',
+            'description' => 'required'
+        ]);
+
+        return Product::create($validatedAttributes);
     }
 
     /**
@@ -58,6 +69,7 @@ class ProductController extends Controller
     public function edit(Product $product)
     {
         //
+        dd($product);
     }
 
     /**

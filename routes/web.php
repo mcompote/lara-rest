@@ -15,11 +15,22 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::resource('products', 'ProductController');
 
-Route::post('/cart', function () {
-    
-});
+
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+//products routes
+Route::prefix('products')->group(function () {
+    Route::get('/',              'ProductController@index' )->name('ProductsShowAll');
+    Route::get('{product}',      'ProductController@show'  )->name('ProductsShowOne');
+    Route::get('/create',         'ProductController@create')->name('ProductsShowOne_FormCreate');
+    Route::get('{product}/edit', 'ProductController@edit'  )->name('ProductsShowOne_FormEdit');
+
+    Route::middleware(['auth'])->group(function () {
+        Route::post('/', 'ProductController@store')->name('ProductsAddOne');
+        Route::patch('/{id}', 'ProductController@update')->name('ProductsEditOne');
+        Route::delete('/{id}', 'ProductController@destroy')->name('ProductsRemoveOne');
+    });    
+});
