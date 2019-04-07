@@ -24,13 +24,13 @@ Route::get('/home', 'HomeController@index')->name('home');
 //products routes
 Route::prefix('products')->group(function () {
     Route::get('/',              'ProductController@index' )->name('ProductsShowAll');
-    Route::get('{product}',      'ProductController@show'  )->name('ProductsShowOne');
+    Route::get('{product}',      'ProductController@show'  )->name('ProductsShowOne')->where(['product' => '[0-9]+']);
     Route::get('/create',         'ProductController@create')->name('ProductsShowOne_FormCreate');
     Route::get('{product}/edit', 'ProductController@edit'  )->name('ProductsShowOne_FormEdit');
 
     Route::middleware(['auth'])->group(function () {
         Route::post('/', 'ProductController@store')->name('ProductsAddOne');
-        Route::patch('/{id}', 'ProductController@update')->name('ProductsEditOne');
-        Route::delete('/{id}', 'ProductController@destroy')->name('ProductsRemoveOne');
+        Route::patch('/{product}', 'ProductController@update')->name('ProductsEditOne')->where(['product' => '[0-9]+']);;
+        Route::delete('/{product}', 'ProductController@destroy')->name('ProductsRemoveOne')->where(['product' => '[0-9]+']);;
     });    
 });
