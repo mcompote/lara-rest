@@ -49,7 +49,7 @@ class User extends Authenticatable
     //invoke as function! not this way: $model->cart
     public function cart()
     {
-        echo $this->carts;
+        // echo $this->carts; //TODO:remove commented line lately
         if( $this->carts->isEmpty() ) {
             return Cart::create([
                 'user_id' => $this->id

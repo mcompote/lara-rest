@@ -3,11 +3,11 @@
 namespace App;
 
 use \App\RawOrder;
+use \App\CartDetalis;
 use \App\QueryScopes\CartScope;
 
 class Cart extends RawOrder
 {
-
     protected $guarded = ['is_cart'];
 
     //adding global scope to model
@@ -22,5 +22,10 @@ class Cart extends RawOrder
             $query->is_cart = true;
         });
     }
+
+    public function details()
+    {
+        return $this->hasMany(CartDetails::class, 'order_id', 'id');
+    }    
 
 }

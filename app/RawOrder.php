@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use \App\User;
+use \App\RawOrderDetails;
 
 class RawOrder extends Model
 {
@@ -25,5 +26,10 @@ class RawOrder extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function rawDetails()
+    {
+        return $this->hasMany(RawOrderDetails::class);
     }
 }

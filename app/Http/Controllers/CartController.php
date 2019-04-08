@@ -16,7 +16,13 @@ class CartController extends Controller
     public function index()
     {
         if( Auth::check() ) {
-            dd( Auth::user()->id );
+
+            $user = Auth::user();
+            $result = $user->cart()->details->map(function ($item, $key) {
+                return [ 'product_id' => $item->id,
+                          'quantity'  => $item->quantity ];
+            })->values()->toJson();
+            return $result;
         }
     }
 
@@ -31,7 +37,7 @@ class CartController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Add [{product, quantity}, ..] to Cart
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response

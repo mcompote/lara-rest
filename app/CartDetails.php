@@ -3,6 +3,7 @@
 namespace App;
 
 use \App\RawOrderDetails;
+use \App\Cart;
 use \App\QueryScopes\CartDetailsScope;
 
 class CartDetails extends RawOrderDetails
@@ -15,4 +16,9 @@ class CartDetails extends RawOrderDetails
 
         static::addGlobalScope(new CartDetailsScope);
     }
+
+    public function cart()
+    {
+        return $this->belongsTo(Cart::class, 'id', 'order_id');
+    }    
 }

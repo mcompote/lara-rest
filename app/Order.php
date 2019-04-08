@@ -3,6 +3,7 @@
 namespace App;
 
 use \App\RawOrder;
+use \App\OrderDetails;
 use \App\QueryScopes\OrderScope;
 
 class Order extends RawOrder
@@ -17,4 +18,11 @@ class Order extends RawOrder
 
         static::addGlobalScope(new OrderScope);
     }
+
+
+    public function details()
+    {
+        return $this->hasMany(OrderDetails::class, 'order_id', 'id');
+    }
+
 }
