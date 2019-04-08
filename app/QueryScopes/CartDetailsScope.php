@@ -22,6 +22,6 @@ class CartDetailsScope implements Scope
                             ->get('id')
                             ->map( function ( $e ) { return $e->id; } )
                             ->all();
-        $builder->whereIn('id', array_values($ids));
+        $builder->whereIn('order_id', array_values($ids));
     }
 }
