@@ -34,3 +34,16 @@ Route::prefix('products')->group(function () {
         Route::delete('/{product}', 'ProductController@destroy')->name('ProductsRemoveOne')->where(['product' => '[0-9]+']);;
     });    
 });
+
+//products routes
+Route::prefix('cart')->group(function () {
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/',              'CartController@index' )->name('CartShowAll');
+        // Route::get('{product}',      'ProductController@show'  )->name('CartShowProduct')->where(['product' => '[0-9]+']);
+        // Route::get('/create',         'ProductController@create')->name('ProductsShowOne_FormCreate');
+        // Route::get('{product}/edit', 'ProductController@edit'  )->name('ProductsShowOne_FormEdit');
+        // Route::post('/', 'ProductController@store')->name('ProductsAddOne');
+        // Route::patch('/{product}', 'ProductController@update')->name('ProductsEditOne')->where(['product' => '[0-9]+']);;
+        // Route::delete('/{product}', 'ProductController@destroy')->name('ProductsRemoveOne')->where(['product' => '[0-9]+']);;
+    });    
+});

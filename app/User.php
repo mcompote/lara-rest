@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use \App\Cart;
 
 class User extends Authenticatable
 {
@@ -36,4 +37,27 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+
+    // assume that user have only one cart, 
+    // therefore we need to extract the 'freshiest' Cart instance
+    public function carts()
+    {
+        return $this->hasMany(Cart::class);
+    }
+
+    //invoke as function! not this way: $model->cart
+    public function cart()
+    {
+        echo $this->carts;
+        if( $this->carts->isEmpty() ) {
+            return Cart::create([
+                'user_id' => $this->id
+            ]);
+        }
+
+        return $this->carts
+            ->sortByDesc('created_at')
+            ->first();
+    }
 }
