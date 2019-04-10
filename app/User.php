@@ -6,6 +6,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use \App\Cart;
+use \App\CartDetails;
 
 class User extends Authenticatable
 {
@@ -49,7 +50,8 @@ class User extends Authenticatable
     //invoke as function! not this way: $model->cart
     public function cart()
     {
-        // echo $this->carts; //TODO:remove commented line lately
+        $this->setRelations([]); //force update relations, see Cart.toOrder() method
+
         if( $this->carts->isEmpty() ) {
             return Cart::create([
                 'user_id' => $this->id

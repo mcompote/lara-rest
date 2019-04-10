@@ -30,20 +30,26 @@ Route::prefix('products')->group(function () {
 
     Route::middleware(['auth'])->group(function () {
         Route::post('/', 'ProductController@store')->name('ProductsAddOne');
-        Route::patch('/{product}', 'ProductController@update')->name('ProductsEditOne')->where(['product' => '[0-9]+']);;
-        Route::delete('/{product}', 'ProductController@destroy')->name('ProductsRemoveOne')->where(['product' => '[0-9]+']);;
+        Route::patch('/{product}', 'ProductController@update')->name('ProductsEditOne')->where(['product' => '[0-9]+']);
+        Route::delete('/{product}', 'ProductController@destroy')->name('ProductsRemoveOne')->where(['product' => '[0-9]+']);
     });    
 });
 
 //products routes
 Route::prefix('cart')->group(function () {
     Route::middleware(['auth'])->group(function () {
-        Route::get('/',              'CartController@index' )->name('CartShowAll');
-        // Route::get('{product}',      'ProductController@show'  )->name('CartShowProduct')->where(['product' => '[0-9]+']);
-        // Route::get('/create',         'ProductController@create')->name('ProductsShowOne_FormCreate');
-        // Route::get('{product}/edit', 'ProductController@edit'  )->name('ProductsShowOne_FormEdit');
-        // Route::post('/', 'ProductController@store')->name('ProductsAddOne');
-        // Route::patch('/{product}', 'ProductController@update')->name('ProductsEditOne')->where(['product' => '[0-9]+']);;
-        // Route::delete('/{product}', 'ProductController@destroy')->name('ProductsRemoveOne')->where(['product' => '[0-9]+']);;
+        Route::get('/',                'CartController@index'      )->name('CartShowAll');
+        Route::post('/',               'CartController@store'      )->name('CartAddProducts');
+        Route::patch('/{product}',     'CartController@update'     )->name('CartAddProducts')->where(['product' => '[0-9]+']);
+        Route::delete('/{product}',    'CartController@destroy'    )->name('CartRemoveProducts')->where(['product' => '[0-9]+']);
+        Route::delete('/',             'CartController@destroyMany')->name('CartRemoveProducts');
+    });    
+});
+
+//products routes
+Route::prefix('order')->group(function () {
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/',                'OrderController@index'  )->name('OrderShowAll');
+        Route::post('/',               'OrderController@store'  )->name('OrderFromCart');
     });    
 });
