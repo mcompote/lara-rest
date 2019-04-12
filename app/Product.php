@@ -17,7 +17,10 @@ class Product extends Model
     }
 
 
-
+    public static function exists($id)
+    {
+        return ! is_null( Product::find($id) );
+    }
 
     
     public function rawOrderDetails()

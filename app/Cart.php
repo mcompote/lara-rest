@@ -34,10 +34,15 @@ class Cart extends RawOrder
         return $this->details->where('product_id', $productId)->first();
     }
 
+    public function hasProduct($productId)
+    {
+        return !( is_null(Product::where('product_id')->first()) );
+    }
+
     public function getProductsArray()
     {
        $result = $this->details->map(function ($item, $key) {
-         return [ 'product_id' => $item->id,
+         return [ 'product_id' => $item->product_id,
                    'quantity'  => $item->quantity ];
       })->values();
 
@@ -46,21 +51,38 @@ class Cart extends RawOrder
 
     protected function _addOrModifyProduct($productId, $quantity, $substituteQuantity)
     {
+        //first check if $productId exists in db
+        if( !Product::exists($productId) ) {
+            return [
+                'productId' => $productId,
+                'exists'    => false ];
+        }
+
         $this->setRelations([]); //force update relations
         $entry = $this->getProduct($productId);
 
         //creating new CartDetail entry
-        if (is_null($entry)) {
+        if ( is_null($entry) ) {
            if ($quantity <= 0) {
-              throw new Exception("Error: can't add product with zero quantity", 1);
-              return null;
+            //   throw new \Exception("Error: can't add product with zero quantity", 1);
+            //   return null;
+            return  [ 'product_id' => $productId,
+                      'quantity'   => $quantity,
+                      'found'     => false,
+                      'created'   => false,
+                      'error'     => 'can not add product with zero quantity' ];
             }
 
-            return CartDetails::create([
+            $result = CartDetails::create([
                 'product_id' => $productId,
                 'order_id' => $this->id,
                 'quantity' => $quantity,
             ]);
+
+            return   [ 'product_id' => $result->product_id,
+                        'quantity'  => $result->quantity,
+                        'found'     => false,
+                        'created'   => true ];
         }
         //updating existing CartDetail entry
         else {
@@ -68,12 +90,16 @@ class Cart extends RawOrder
 
             if ($resultQuantity <= 0) {
                 $entry->delete();
-                return null;
+                return  [ 'product_id' => $productId,
+                           'quantity'  => null,
+                           'deleted'   => true ];
             } else {
                 $entry->update([
                     'quantity' => $resultQuantity,
                 ]);
-                return $entry;
+                return [ 'product_id' => $entry->product_id,
+                          'quantity'  => $entry->quantity,
+                          'updated'   => true ];
             }
         }
     }
@@ -88,11 +114,27 @@ class Cart extends RawOrder
 
     public function deleteProduct($productId)
     {
-       $entry = $this->getProduct($productId);
-       if( is_null($entry) )
-         return null;
+        //first check if $productId exists in db
+        if( !Product::exists($productId) ) {
+            return [
+                'productId' => $productId,
+                'exists'    => false ];
+        }
 
-      return $entry->delete();
+       $entry = $this->getProduct($productId);
+       if( is_null($entry) ) {
+       //  return null;
+       //  or throw exception or object
+         return 
+         [ 'product_id' => $productId,
+           'deleted'    => false,
+           'found'      => false ];
+        }
+
+      $result = $entry->delete();
+      return [ 'product_id' => $productId,
+               'found'      => true,
+               'deleted'    => $result ];
     }
 
     public function toOrder()

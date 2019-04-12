@@ -6,6 +6,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use \App\Cart;
+use \App\Order;
 use \App\CartDetails;
 
 class User extends Authenticatable
@@ -47,6 +48,11 @@ class User extends Authenticatable
         return $this->hasMany(Cart::class);
     }
 
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
     //invoke as function! not this way: $model->cart
     public function cart()
     {
@@ -61,5 +67,10 @@ class User extends Authenticatable
         return $this->carts
             ->sortByDesc('created_at')
             ->first();
+    }
+
+    public function makeOrderFromCart()
+    {
+        $this->cart()->toOrder();
     }
 }

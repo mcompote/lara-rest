@@ -14,7 +14,13 @@ class OrderController extends Controller
      */
     public function index()
     {
-        //
+        if( Auth::check() ) {
+
+            $user = Auth::user();
+            // $result = $user->cart()->getProductsArray();
+            // ->toJson()
+            return $result;
+        }
     }
 
     /**

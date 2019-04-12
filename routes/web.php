@@ -38,11 +38,12 @@ Route::prefix('products')->group(function () {
 //products routes
 Route::prefix('cart')->group(function () {
     Route::middleware(['auth'])->group(function () {
-        Route::get('/',                'CartController@index'      )->name('CartShowAll');
-        Route::post('/',               'CartController@store'      )->name('CartAddProducts');
-        Route::patch('/{product}',     'CartController@update'     )->name('CartAddProducts')->where(['product' => '[0-9]+']);
-        Route::delete('/{product}',    'CartController@destroy'    )->name('CartRemoveProducts')->where(['product' => '[0-9]+']);
-        Route::delete('/',             'CartController@destroyMany')->name('CartRemoveProducts');
+        Route::get('/',                'CartController@index'      )->name('CartShowAll         ');
+        Route::post('/',               'CartController@storeMany'  )->name('CartAddProducts     ');
+        Route::post('/{product}',      'CartController@store'      )->name('CartAddOneProduct   ')->where(['product' => '[0-9]+']);
+        Route::patch('/{product}',     'CartController@update'     )->name('CartModifyOneProduct')->where(['product' => '[0-9]+']);
+        Route::delete('/{product}',    'CartController@destroy'    )->name('CartRemoveOneProduct')->where(['product' => '[0-9]+']);
+        Route::delete('/',             'CartController@destroyMany')->name('CartRemoveProducts  ');
     });    
 });
 

@@ -28,13 +28,46 @@ class CartController extends Controller
     }
 
 
+    public function store(Request $request, $product)
+    {
+        if (Auth::check()) {
+
+            // request payload validation --->
+            $inputData = $request->json('data');
+            if( !is_array($inputData) ) {
+                $error = ValidationException::withMessages([
+                    'generalError' => ['Cant convert input data to array. Awaiting JSON: { "data": {quantity: 42} }']
+                 ]);
+                 throw $error;
+            }
+    
+            if( count($inputData) == 0 ) {
+                $error = ValidationException::withMessages([
+                    'emptyArray' => ['Nothing to process. Seems like "data" array is empty. Awaiting JSON: { "data": {quantity: 42} }']
+                 ]);
+                 throw $error;            
+            }          
+
+            //input payload should looks like this [ "quantity" => 42 ]
+                Validator::make($inputData, [
+                        'quantity' => 'required|numeric'
+                    ])->validate();
+
+            // <--- request payload validation
+
+            $user = Auth::user();  
+            $result = $user->cart()->addProduct($product, $inputData["quantity"]);
+            return [ 'results' => $result ];
+        }    
+    }
+
     /**
      * Add [{product, quantity}, ..] to Cart
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function storeMany(Request $request)
     {
         // $result = Validator::make($request->all(), [
         //     // 'data' => 'string'
@@ -77,6 +110,88 @@ class CartController extends Controller
         }
     }
 
+    public function update(Request $request, $product)
+    {
+        if (Auth::check()) {
+
+            // request payload validation --->
+            $inputData = $request->json('data');
+            if( !is_array($inputData) ) {
+                $error = ValidationException::withMessages([
+                    'generalError' => ['Cant convert input data to array. Awaiting JSON: { "data": {quantity: 42} }']
+                 ]);
+                 throw $error;
+            }
+    
+            if( count($inputData) == 0 ) {
+                $error = ValidationException::withMessages([
+                    'emptyArray' => ['Nothing to process. Seems like "data" array is empty. Awaiting JSON: { "data": {quantity: 42} }']
+                 ]);
+                 throw $error;            
+            }          
+
+            //input payload should looks like this [ "quantity" => 42 ]
+                Validator::make($inputData, [
+                        'quantity' => 'required|numeric'
+                    ])->validate();
+
+            // <--- request payload validation 
+
+            $user = Auth::user();  
+            $result = $user->cart()->setProductQuantity($product, $inputData["quantity"]);
+            return [ 'results' => $result ];
+        }
+    }
+
+    public function updateMany(Request $request)
+    {
+        if( Auth::check() ) { 
+
+            // request payload validation --->
+            $inputData = $request->json('data');
+            if( !is_array($inputData) ) {
+                $error = ValidationException::withMessages([
+                    'generalError' => ['Cant convert input data to array. Awaiting JSON: { data: [ obj1, obj2,.. ,objN] }']
+                 ]);
+                 throw $error;
+            }
+    
+            if( count($inputData) == 0 ) {
+                $error = ValidationException::withMessages([
+                    'emptyArray' => ['Nothing to process. Seems like "data" array is empty. Awaiting JSON: { data: [ obj1, obj2,.. ,objN] }']
+                 ]);
+                 throw $error;            
+            }
+    
+            for ($i=0; $i < count($inputData); $i++) { 
+                Validator::make($inputData[$i], [
+                        'productId' => 'required|numeric',
+                        'quantity' => 'required|numeric'
+                    ])->validate();
+            }
+            // <--- request payload validation 
+
+            $user = Auth::user();  
+            for ($i=0; $i < count($inputData); $i++) { 
+                $user->cart()->setProductQuantity($inputData[$i]['productId'], $inputData[$i]['quantity']);
+            }
+        }
+    }
+
+    /**
+     * Remove Product with concrete $id from Cart
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(Request $request, $product)
+    {
+        if (Auth::check()) {
+            $user = Auth::user();  
+            $result = $user->cart()->deleteProduct($product);
+            return [ 'result' => $result ];
+        }
+    }
 
     /**
      * Remove Products [ ProductId1, ProductId2, ....] from Cart
@@ -92,7 +207,7 @@ class CartController extends Controller
             $inputData = $request->json('data');
             if( !is_array($inputData) ) {
                 $error = ValidationException::withMessages([
-                    'generalError' => ['Cant convert input data to array. Awaiting JSON: { "data": [ int1, int2,.. ,intN] }']
+                    'generalError' => ['Cant convert input data to array. Awaiting JSON: { "data": [ int1, int2,.. , intN] }']
                  ]);
                  throw $error;
             }
@@ -113,18 +228,15 @@ class CartController extends Controller
             }
             // <--- request payload validation 
 
-            $user = Auth::user();  
+            $user = Auth::user(); 
+            $results = [];
+
             for ($i=0; $i < count($inputData); $i++) { 
-                $user->cart()->deleteProduct($inputData[$i]);
+                $result = $user->cart()->deleteProduct($inputData[$i]);
+                array_push($results, $result);
             }
 
-            return redirect()->route('CartShowAll');
+            return [ 'result' => $results ];
         }
-    }
-
-
-    public function destroyMany(Request $request)
-    {
-        # code...
     }
 }
