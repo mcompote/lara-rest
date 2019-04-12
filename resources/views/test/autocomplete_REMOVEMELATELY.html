@@ -16,3 +16,34 @@
 
    <button type="submit" class="btn btn-primary">Submit</button>
 </form>
+
+
+[{productId: 66, quantity: 3} ,
+{productId: 67, quantity: 4} ,
+{productId: 67, quantity: 4} ,
+{productId: 68, quantity: 5} ,
+{productId: 69, quantity: 6} ,
+{productId: 70, quantity: 7}]
+
+
+$.ajax({
+   'url':'http://127.0.0.1:8000/order',
+   'method':'POST',
+   'dataType': 'json',
+   'contentType': 'application/json',
+   'data':JSON.stringify( { data: 
+   [{productId: 66, quantity: 1} ,
+   {productId: 67, quantity: 2} ,
+   {productId: 67, quantity: 3} ,
+   {productId: 68, quantity: 2} ,
+   {productId: 69, quantity: 1} ,
+   {productId: 70, quantity: 0}] } 	),
+    'success': function( s ) { console.log( s ) },
+   'failure': f => console.log
+   });
+
+   
+SELECT ood.user_id, ood.order_id, COUNT(product_id) AS cnt FROM 
+( SELECT o.user_id, od.order_id, o.is_cart, od.product_id FROM `order_details` AS od RIGHT JOIN orders AS o ON o.id = od.order_id ) AS ood 
+GROUP BY ood.user_id, ood.order_id
+ORDER BY cnt ASC

@@ -23,7 +23,7 @@ class CartController extends Controller
             $user = Auth::user();
             $result = $user->cart()->getProductsArray();
             // ->toJson()
-            return $result;
+            return ['result' => $result];
         }
     }
 
@@ -100,13 +100,15 @@ class CartController extends Controller
                     ])->validate();
             }
             // <--- request payload validation 
-
+            $results = [];
             $user = Auth::user();  
+            
             for ($i=0; $i < count($inputData); $i++) { 
-                $user->cart()->addProduct($inputData[$i]['productId'], $inputData[$i]['quantity']);
+                $result = $user->cart()->addProduct($inputData[$i]['productId'], $inputData[$i]['quantity']);
+                array_push($results, $result);
             }
 
-            // return redirect()->route('CartShowAll');
+            return [ 'result' => $results ];
         }
     }
 
@@ -170,11 +172,15 @@ class CartController extends Controller
                     ])->validate();
             }
             // <--- request payload validation 
-
+            $results = [];
             $user = Auth::user();  
+            
             for ($i=0; $i < count($inputData); $i++) { 
-                $user->cart()->setProductQuantity($inputData[$i]['productId'], $inputData[$i]['quantity']);
+                $result = $user->cart()->setProductQuantity($inputData[$i]['productId'], $inputData[$i]['quantity']);
+                array_push($results, $result);
             }
+
+            return [ 'result' => $results ];
         }
     }
 

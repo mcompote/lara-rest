@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Order;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use \Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Validator;
 
 class OrderController extends Controller
 {
@@ -15,77 +18,38 @@ class OrderController extends Controller
     public function index()
     {
         if( Auth::check() ) {
-
+            $result = [];
             $user = Auth::user();
-            // $result = $user->cart()->getProductsArray();
+            foreach ($user->orders as $order) {
+                array_push( $result, $order->getFullInfoArray() );
+            }
             // ->toJson()
-            return $result;
+            return ['result' => $result];
         }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
-     * Store a newly created resource in storage.
+     * Creates an order from the cart
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    // TODO: add optional parameters to "new" order (description, discount)
     public function store(Request $request)
     {
-        //
-    }
+        if( Auth::check() ) {
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Order  $order
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Order $order)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Order  $order
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Order $order)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Order  $order
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Order $order)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Order  $order
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Order $order)
-    {
-        //
+            $user = Auth::user();
+            $result = $user->cart()->toOrder();
+            
+            return ['result' => [
+                'created' => !is_null($result),
+                'order' => !is_null($result) ? $result->getFullInfoArray() : []
+                ]
+            ];
+            // or something like this
+            // return redirect()->action('OrderController@index');
+        }
     }
 }

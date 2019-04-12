@@ -4,6 +4,7 @@ namespace App;
 
 use \App\QueryScopes\CartScope;
 use \App\RawOrder;
+use \App\Order;
 
 class Cart extends RawOrder
 {
@@ -44,7 +45,7 @@ class Cart extends RawOrder
        $result = $this->details->map(function ($item, $key) {
          return [ 'product_id' => $item->product_id,
                    'quantity'  => $item->quantity ];
-      })->values();
+      })->values()->toArray();
 
       return $result;
     }
@@ -137,12 +138,14 @@ class Cart extends RawOrder
                'deleted'    => $result ];
     }
 
-    public function toOrder()
+    // TODO: add optional parameters to "new" order
+    public function toOrder( $description="", $discount=0 )
     {
        $this->is_cart = false;
        $this->created_at = now();
        $this->updated_at = now();
        $this->save();
+       return Order::find( $this->id );
        //$this->fresh();  //doesn't work as I expected, possible workaround: $user->setRelations([])
     }
 
